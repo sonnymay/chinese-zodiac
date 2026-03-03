@@ -1,66 +1,33 @@
 @import "tailwindcss";
 
-/* ── Custom design tokens ── */
+/* ── Design tokens ── */
 @theme inline {
-  --color-gold:            #c9a84c;
-  --color-gold-light:      #e8d5a3;
-  --color-gold-dark:       #8b6914;
-  --color-gold-muted:      #6b500e;
-  --color-crimson:         #8b0000;
-  --color-crimson-bright:  #cc2236;
-  --color-ink:             #0d0508;
-  --color-ink-mid:         #1a0a0f;
-  --color-ink-light:       #261218;
-  --color-parchment:       #f5efe0;
-  --color-parchment-muted: #c4a882;
-
-  --font-cinzel:    'Cinzel Decorative', serif;
-  --font-cormorant: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --color-bg:        #faf8f4;
+  --color-surface:   #ffffff;
+  --color-border:    #e5dfd7;
+  --color-text:      #2d2926;
+  --color-muted:     #7a6f65;
+  --color-subtle:    #b8aea6;
+  --color-accent:    #8b5a2b;
+  --color-accent-bg: #fdf6ee;
 }
 
-/* ── Base reset & global ── */
+/* ── Reset ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
 html { scroll-behavior: smooth; }
 
 body {
-  background-color: #0d0508;
-  color: #f5efe0;
-  font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  background-color: #faf8f4;
+  color: #2d2926;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
   min-height: 100vh;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Subtle radial background glow */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background:
-    radial-gradient(ellipse 80% 60% at 20% 50%, rgba(139,0,0,0.18) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 40% at 80% 20%, rgba(201,168,76,0.06) 0%, transparent 50%),
-    radial-gradient(ellipse 50% 60% at 50% 100%, rgba(139,0,0,0.12) 0%, transparent 50%);
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* ── Typography helpers ── */
-.font-cinzel   { font-family: var(--font-cinzel-var), serif; }
-.font-cormorant { font-family: var(--font-cormorant-var), Georgia, serif; }
-
-/* ── Gold shimmer animation ── */
-@keyframes goldShimmer {
-  0%, 100% { opacity: 0.7; }
-  50%       { opacity: 1; }
-}
-
-@keyframes floatY {
-  0%, 100% { transform: translateY(0px); }
-  50%       { transform: translateY(-14px); }
-}
-
+/* ── Animations ── */
 @keyframes revealUp {
-  from { opacity: 0; transform: translateY(28px); }
+  from { opacity: 0; transform: translateY(16px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
@@ -69,157 +36,97 @@ body::before {
   to   { opacity: 1; }
 }
 
-@keyframes rotateIn {
-  from { opacity: 0; transform: scale(0.85) rotate(-3deg); }
-  to   { opacity: 1; transform: scale(1) rotate(0deg); }
-}
-
-@keyframes lanternFloat {
-  0%   { transform: translateY(100vh) rotate(-5deg); opacity: 0; }
-  5%   { opacity: 0.7; }
-  95%  { opacity: 0.5; }
-  100% { transform: translateY(-120px) rotate(8deg); opacity: 0; }
-}
-
-@keyframes particleDrift {
-  0%   { transform: translateY(0) translateX(0); opacity: 0; }
-  10%  { opacity: 1; }
-  90%  { opacity: 0.6; }
-  100% { transform: translateY(-80vh) translateX(var(--drift-x, 30px)); opacity: 0; }
-}
-
-/* ── Reveal animation class (applied via JS) ── */
-.reveal {
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
-}
-.reveal.in-view {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* ── Decorative divider ── */
-.gold-divider {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin: 2rem 0;
-}
-.gold-divider::before,
-.gold-divider::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(201,168,76,0.35), transparent);
-}
-
-/* ── Card base ── */
+/* ── Unified card ── */
 .east-card {
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(201,168,76,0.18);
+  background: #ffffff;
+  border: 1px solid #e5dfd7;
   border-radius: 8px;
-  position: relative;
-  overflow: hidden;
-  transition: border-color 0.3s, background 0.3s;
-}
-.east-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(201,168,76,0.5), transparent);
+  transition: border-color 0.2s;
 }
 .east-card:hover {
-  border-color: rgba(201,168,76,0.35);
-  background: rgba(255,255,255,0.05);
+  border-color: #c4b8a8;
 }
 
 /* ── Number badge ── */
 .lucky-number-badge {
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  border: 1px solid rgba(201,168,76,0.4);
+  border: 1.5px solid #e5dfd7;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-cinzel-var), serif;
-  font-size: 1.1rem;
-  color: #c9a84c;
-  background: rgba(201,168,76,0.06);
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1rem;
+  color: #8b5a2b;
+  background: #fdf6ee;
   flex-shrink: 0;
 }
 
-/* ── Animal chip ── */
+/* ── Animal chips ── */
 .animal-chip {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 14px;
+  gap: 5px;
+  padding: 5px 12px;
   border-radius: 20px;
-  font-size: 0.9rem;
-  font-family: var(--font-cormorant-var), Georgia, serif;
-  letter-spacing: 0.03em;
-  transition: transform 0.2s;
+  font-size: 0.88rem;
+  font-family: 'Inter', system-ui, sans-serif;
+  transition: transform 0.15s;
 }
-.animal-chip:hover { transform: scale(1.05); }
+.animal-chip:hover { transform: scale(1.04); }
 .animal-chip.compatible {
-  background: rgba(34,197,94,0.08);
-  border: 1px solid rgba(34,197,94,0.25);
-  color: #86efac;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #166534;
 }
 .animal-chip.incompatible {
-  background: rgba(220,38,38,0.08);
-  border: 1px solid rgba(220,38,38,0.25);
-  color: #fca5a5;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
 }
 
 /* ── Input ── */
 .zodiac-input {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(139,105,20,0.6);
-  border-radius: 4px;
-  color: #f5efe0;
-  font-family: var(--font-cormorant-var), Georgia, serif;
-  font-size: 1.15rem;
-  letter-spacing: 0.04em;
-  padding: 13px 18px;
+  background: #ffffff;
+  border: 1.5px solid #e5dfd7;
+  border-radius: 6px;
+  color: #2d2926;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 1rem;
+  padding: 11px 16px;
   outline: none;
-  transition: border-color 0.3s, box-shadow 0.3s;
+  transition: border-color 0.2s, box-shadow 0.2s;
   width: 100%;
 }
 .zodiac-input:focus {
-  border-color: #c9a84c;
-  box-shadow: 0 0 18px rgba(201,168,76,0.18);
+  border-color: #8b5a2b;
+  box-shadow: 0 0 0 3px rgba(139, 90, 43, 0.1);
 }
-.zodiac-input::placeholder { color: rgba(196,168,130,0.35); }
+.zodiac-input::placeholder { color: #b8aea6; }
 
-/* ── Buttons ── */
+/* ── Button ── */
 .btn-primary {
-  background: linear-gradient(135deg, #7a0000, #b01830);
-  border: 1px solid rgba(139,105,20,0.5);
-  border-radius: 4px;
-  color: #e8d5a3;
+  background: #2d2926;
+  border: none;
+  border-radius: 6px;
+  color: #faf8f4;
   cursor: pointer;
-  font-family: var(--font-cormorant-var), Georgia, serif;
-  font-size: 1.1rem;
-  letter-spacing: 0.12em;
-  padding: 13px 28px;
-  transition: all 0.3s;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  padding: 11px 22px;
+  transition: background 0.2s;
   white-space: nowrap;
 }
-.btn-primary:hover {
-  background: linear-gradient(135deg, #b01830, #7a0000);
-  box-shadow: 0 0 18px rgba(176,24,48,0.4);
-  border-color: #c9a84c;
-}
+.btn-primary:hover { background: #4a3f38; }
 
 /* ── Scrollbar ── */
 ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #0d0508; }
-::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.25); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(201,168,76,0.4); }
+::-webkit-scrollbar-track { background: #faf8f4; }
+::-webkit-scrollbar-thumb { background: #d4c9be; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #b8aea6; }
 
 /* ── Selection ── */
-::selection { background: rgba(201,168,76,0.2); color: #e8d5a3; }
+::selection { background: rgba(139, 90, 43, 0.12); color: #2d2926; }

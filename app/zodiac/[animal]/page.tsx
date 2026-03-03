@@ -3,7 +3,6 @@ import type { Metadata } from 'next';
 import { getZodiacData } from '@/lib/zodiacData';
 import { ZODIAC_ORDER } from '@/lib/zodiacData';
 import ZodiacDisplay from '@/components/ZodiacDisplay';
-import ClientParticle from '@/components/ClientParticle';
 
 interface Props {
   params: Promise<{ animal: string }>;
@@ -31,20 +30,19 @@ export default async function AnimalPage({ params }: Props) {
   if (!data) notFound();
 
   return (
-    <>
-      <ClientParticle />
-      <main style={{ position: 'relative', zIndex: 1, maxWidth: '960px', margin: '0 auto', padding: '0 0 60px' }}>
-        <ZodiacDisplay animal={data} showBackLink />
+    <main style={{ maxWidth: '960px', margin: '0 auto', padding: '0 0 60px' }}>
+      <ZodiacDisplay animal={data} showBackLink />
 
-        <footer style={{
-          textAlign: 'center', padding: '24px 20px',
-          borderTop: '1px solid rgba(201,168,76,0.1)',
-          color: 'rgba(196,168,130,0.3)',
-          fontSize: '0.78rem', letterSpacing: '0.08em',
-        }}>
-          Chinese Animal Year · Crafted with Ancient Wisdom · {new Date().getFullYear()}
-        </footer>
-      </main>
-    </>
+      <footer style={{
+        textAlign: 'center',
+        padding: '20px',
+        borderTop: '1px solid #e5dfd7',
+        color: '#b8aea6',
+        fontFamily: 'Inter, system-ui, sans-serif',
+        fontSize: '0.78rem',
+      }}>
+        Chinese Animal Year · {new Date().getFullYear()}
+      </footer>
+    </main>
   );
 }
