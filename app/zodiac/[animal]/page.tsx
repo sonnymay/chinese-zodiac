@@ -31,7 +31,7 @@ export default async function AnimalPage({ params }: Props) {
 
   return (
     <main style={{ maxWidth: '960px', margin: '0 auto', padding: '0 0 60px' }}>
-      <ZodiacDisplay animal={data} showBackLink />
+      <ZodiacDisplay animal={data} showBackLink defaultProfileOpen />
 
       <footer style={{
         textAlign: 'center',

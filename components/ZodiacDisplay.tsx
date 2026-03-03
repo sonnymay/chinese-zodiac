@@ -14,6 +14,7 @@ interface Props {
   zodiacYear?: number;
   showBackLink?: boolean;
   compact?: boolean;
+  defaultProfileOpen?: boolean;
 }
 
 const ELEMENT_SYMBOLS: Record<string, string> = {
@@ -43,8 +44,8 @@ const ELEMENT_BORDER: Record<string, string> = {
   Water: '#bae6fd',
 };
 
-export default function ZodiacDisplay({ animal, yearElement, zodiacYear, showBackLink, compact }: Props) {
-  const [profileOpen, setProfileOpen] = useState(!!showBackLink);
+export default function ZodiacDisplay({ animal, yearElement, zodiacYear, showBackLink, compact, defaultProfileOpen = false }: Props) {
+  const [profileOpen, setProfileOpen] = useState(defaultProfileOpen);
   const years = getRecentYears(animal.key);
   const elemText = ELEMENT_TEXT[animal.element];
   const elemBg   = ELEMENT_BG[animal.element];
