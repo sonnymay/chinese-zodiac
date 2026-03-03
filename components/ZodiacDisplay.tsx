@@ -355,7 +355,7 @@ export default function ZodiacDisplay({ animal, yearElement, zodiacYear, showBac
 
       {/* ── All Animals (subtle) ── */}
       {!compact && (
-        <div style={{ padding: '1rem 1rem 2.5rem' }}>
+        <div style={{ padding: '1rem 1rem 3.5rem' }}>
           <hr style={{ border: 'none', borderTop: '1px solid #e5dfd7', maxWidth: '800px', margin: '0 auto 1.75rem' }} />
           <p style={{
             textAlign: 'center',

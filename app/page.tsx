@@ -230,6 +230,11 @@ export default function HomePage() {
             margin: '0 auto 2rem',
             padding: '0 1.25rem',
           }}>
+            <hr style={{
+              border: 'none',
+              borderTop: '1px solid #e5dfd7',
+              marginBottom: '2.5rem',
+            }} />
             <div className="east-card" style={{ padding: '1.5rem 1.75rem' }}>
               <h2 style={{
                 fontFamily: FONT_DISPLAY,
