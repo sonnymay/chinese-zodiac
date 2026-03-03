@@ -10,24 +10,22 @@ export interface CompatResult {
 }
 
 // ── Six Harmonious Pairs (六合, Liú hé) ──────────────────────────────────────
-// Highest natural affinity — complementary energies.
 const HARMONIOUS_DESC: Partial<Record<string, string>> = {
   'rat-ox':
-    "The Rat's quick wit and the Ox's steady patience form a natural division of labour — one supplies the ideas, the other sees them through. A deeply grounding and surprisingly durable bond.",
+    "Rat and Ox are a natural team. The Rat comes up with ideas; the Ox has the patience and follow-through to make them happen. They balance each other well and tend to build something solid together.",
   'tiger-pig':
-    "The Tiger's boldness finds genuine warmth in the Pig's generous spirit. One brings courage; the other brings heart. Together they balance action with compassion and make each other braver.",
+    "Tiger and Pig complement each other well. The Tiger brings confidence and drive; the Pig brings warmth and support. Together they tend to be braver and kinder than they are on their own.",
   'rabbit-dog':
-    "Both signs prize loyalty and a peaceful home above almost everything else. The Dog's protectiveness gives the Rabbit security to thrive, while the Rabbit's gentleness soothes the Dog's anxious streak.",
+    "Rabbit and Dog want the same things from a relationship: loyalty, stability, and a peaceful home. The Dog's protectiveness puts the Rabbit at ease; the Rabbit's calm helps the Dog relax.",
   'dragon-rooster':
-    "The Dragon's grand ambitions are met by the Rooster's meticulous precision. Each deeply admires what the other brings, and when they work together, they accomplish things neither could alone.",
+    "Dragon and Rooster work well together. The Dragon has the vision; the Rooster has the precision to execute it. Each respects what the other brings, and they tend to accomplish a lot as a pair.",
   'snake-monkey':
-    "The Snake's depth and the Monkey's inventiveness create a stimulating partnership. They keep each other endlessly curious — rarely running out of things to discover, debate, or build.",
+    "Snake and Monkey make a sharp, stimulating pair. The Snake thinks deeply; the Monkey thinks quickly. They keep each other interested and tend to push each other further than they'd go alone.",
   'horse-goat':
-    "The Horse's love of freedom and the Goat's creativity feed one another perfectly. They share a taste for beauty, wandering, and open possibilities — building a warm and imaginative life.",
+    "Horse and Goat are an easy, natural fit. Both value freedom and enjoy life at their own pace. They give each other space without it feeling like distance, and rarely run out of things to enjoy together.",
 };
 
 // ── Three Harmony Trines (三合, Sān hé) ─────────────────────────────────────
-// Deep shared values and compatible temperaments.
 const TRINES: ZodiacKey[][] = [
   ['rat', 'dragon', 'monkey'],
   ['ox', 'snake', 'rooster'],
@@ -36,37 +34,35 @@ const TRINES: ZodiacKey[][] = [
 ];
 
 // ── Six Clash Pairs (六冲, Liú chōng) ───────────────────────────────────────
-// Directly opposing energies — high friction by default.
 const CLASH_DESC: Partial<Record<string, string>> = {
   'rat-horse':
-    "Rat and Horse are direct opposites — both independent and self-willed, each convinced their way is right. The friction can generate real energy if channelled well, but it demands that neither competes for centre stage.",
+    "Rat and Horse are opposing signs. Both are independent and like doing things their own way, which creates friction. It can work, but it takes a lot of give and take — neither should expect the other to simply fall in line.",
   'ox-goat':
-    "Ox and Goat clash in rhythm: the Ox is structured and resolute; the Goat is fluid and feeling-led. They can build something meaningful together, but it takes genuine patience from both sides.",
+    "Ox and Goat move at different speeds and care about different things. The Ox wants structure and consistency; the Goat wants flexibility and room to feel. Patience with each other's very different approaches is the key.",
   'tiger-monkey':
-    "Tiger and Monkey are each other's most persistent rivals. The Tiger charges forward; the Monkey outmanoeuvres. Real mutual respect — more than just tolerance — turns this rivalry into productive creative tension.",
+    "Tiger and Monkey tend to compete. The Tiger is direct and forceful; the Monkey prefers to outthink and outmanoeuvre. Genuine mutual respect — not just tolerance — is what makes this work.",
   'rabbit-rooster':
-    "The Rabbit's quiet sensitivity sits uncomfortably against the Rooster's blunt, exacting standards. Both care deeply about quality and doing things right; finding that shared ground is the key to this pairing.",
+    "Rabbit and Rooster can rub each other the wrong way. The Rabbit is sensitive and avoids conflict; the Rooster is blunt and exacting. Both care about doing things well, and that shared value is the best place to start.",
   'dragon-dog':
-    "Dragon and Dog are equally stubborn and equally certain of their own worldview. They challenge each other relentlessly — which can forge growth, but only if both are genuinely willing to listen.",
+    "Dragon and Dog are both strong-willed and confident in their own views. They can spend a lot of energy disagreeing. It works when both are genuinely willing to listen — not just wait for the other to finish talking.",
   'snake-pig':
-    "Snake and Pig sit at opposite poles of instinct: the Snake is calculating and guarded; the Pig is open and trusting. Honest, patient communication is essential to bridge their natural wariness of each other.",
+    "Snake and Pig are quite different at their core. The Snake is guarded and deliberate; the Pig is open and trusting. It takes time to understand each other's approach, and honest communication is what gets them there.",
 };
 
 // ── Six Harm Pairs (六害, Liú hài) ──────────────────────────────────────────
-// Subtle, persistent friction — not a direct clash but an ongoing misalignment.
 const HARM_DESC: Partial<Record<string, string>> = {
   'rat-goat':
-    "Rat and Goat rarely see the world through the same lens — the Rat's pragmatism can feel cold to the Goat's emotional nature. A conscious effort to appreciate each other's very different sensibilities goes a long way.",
+    "Rat and Goat see the world differently. The Rat is practical and analytical; the Goat is more emotional and feeling-led. It's not a natural fit, but with patience and real effort it can work.",
   'ox-horse':
-    "Both Ox and Horse are hardworking, but they disagree on almost everything beyond that. The Horse craves freedom and spontaneity; the Ox craves structure and routine. Genuine compromise — not just endurance — is what makes this work.",
+    "Ox and Horse are both hardworking, but they clash on almost everything else. The Horse wants freedom and spontaneity; the Ox wants structure and routine. Both have to give ground for this to work.",
   'tiger-snake':
-    "Tiger and Snake approach life through opposite lenses: action versus contemplation, instinct versus calculation. They can intrigue each other deeply, but slow-building trust is essential before either truly lowers their guard.",
+    "Tiger and Snake operate at different speeds. The Tiger acts fast; the Snake moves carefully and deliberately. They can find each other interesting, but trust takes time and neither should rush it.",
   'rabbit-dragon':
-    "The Rabbit's gentle approach can be overwhelmed by the Dragon's intensity. The Dragon must learn to soften; the Rabbit must find more confidence to step forward. When both adjust, the pairing becomes surprisingly complementary.",
+    "The Rabbit can find the Dragon's intensity a bit much, and the Dragon may lose patience with the Rabbit's caution. It works when the Dragon dials it back and the Rabbit steps up — both need to meet in the middle.",
   'monkey-pig':
-    "The Monkey's clever manoeuvring can unsettle the Pig's open-hearted trust. The Pig may feel manipulated; the Monkey may feel underappreciated. Genuine sincerity from the Monkey changes the dynamic entirely.",
+    "Monkey's cleverness can make the Pig feel like they're being outmanoeuvred. The Pig needs honesty from the Monkey; the Monkey needs to appreciate the Pig's straightforwardness. Open communication fixes most of the friction.",
   'rooster-dog':
-    "Rooster and Dog are both principled and quick to voice criticism — often of each other. Their standards rarely align on the surface, but a shared sense of purpose and honest mutual appreciation quiets most of the noise.",
+    "Rooster and Dog are both principled but often disagree on how things should be done. They can be critical of each other. A shared goal and genuine appreciation for what the other does well makes a real difference.",
 };
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -93,7 +89,7 @@ export function getCompatibility(a: ZodiacKey, b: ZodiacKey): CompatResult {
       rating: 'neutral',
       stars: 3,
       label: 'Kindred Spirits',
-      description: `Two ${cap(a)}s understand each other deeply — sometimes too well. You share the same strengths, the same blind spots, and the same drives. This can be beautifully harmonious or quietly competitive depending on how well each of you knows yourself.`,
+      description: `Two ${cap(a)}s understand each other well — sometimes too well. You share the same strengths and the same blind spots. That can be a real bond, or it can lead to butting heads. Depends on how self-aware you each are.`,
     };
   }
 
@@ -106,7 +102,7 @@ export function getCompatibility(a: ZodiacKey, b: ZodiacKey): CompatResult {
       rating: 'excellent',
       stars: 5,
       label: 'Excellent Match',
-      description: HARMONIOUS_DESC[key] ?? "A naturally harmonious pairing — these signs complement each other's strengths and ease each other's weaknesses with very little effort.",
+      description: HARMONIOUS_DESC[key] ?? "A naturally good pairing. These signs complement each other's strengths and tend to get along without much effort.",
     };
   }
 
@@ -117,7 +113,7 @@ export function getCompatibility(a: ZodiacKey, b: ZodiacKey): CompatResult {
         rating: 'strong',
         stars: 4,
         label: 'Strong Affinity',
-        description: "You share the same celestial trine — a deep-rooted kinship that makes mutual understanding come naturally. Your core values and life rhythms align, and you tend to draw out each other's best qualities without having to try.",
+        description: "You share the same trine in the Chinese zodiac, which means your values and personalities naturally align. You tend to understand each other without much effort and bring out each other's strengths.",
       };
     }
   }
@@ -129,7 +125,7 @@ export function getCompatibility(a: ZodiacKey, b: ZodiacKey): CompatResult {
       rating: 'challenging',
       stars: 1,
       label: 'Challenging Pairing',
-      description: CLASH_DESC[key] ?? "These signs sit in direct opposition in the Chinese zodiac. The tension can be turned into something productive, but it calls for real patience, self-awareness, and a genuine willingness to meet halfway.",
+      description: CLASH_DESC[key] ?? "These signs are directly opposing in the Chinese zodiac. It can work, but it takes real effort, patience, and a genuine willingness to meet halfway.",
     };
   }
 
@@ -140,7 +136,7 @@ export function getCompatibility(a: ZodiacKey, b: ZodiacKey): CompatResult {
       rating: 'difficult',
       stars: 2,
       label: 'Requires Effort',
-      description: HARM_DESC[key] ?? "There's a persistent subtle friction between these signs — not outright conflict, but a tendency to misread each other's intentions. Awareness and honest dialogue smooth most of the rough edges over time.",
+      description: HARM_DESC[key] ?? "These signs don't naturally click. There's no major conflict, but there's a tendency to misread each other. Awareness and honest communication smooth most of the rough edges.",
     };
   }
 
@@ -149,6 +145,6 @@ export function getCompatibility(a: ZodiacKey, b: ZodiacKey): CompatResult {
     rating: 'neutral',
     stars: 3,
     label: 'Neutral',
-    description: "No special affinity, no inherent friction — this relationship is shaped entirely by the people involved. With patience and genuine communication it can become something strong.",
+    description: "No special connection, no natural conflict — it depends entirely on the people involved. With good communication and mutual respect, this can grow into a strong relationship.",
   };
 }
