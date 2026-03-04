@@ -222,85 +222,19 @@ export default function HomePage() {
             animal={zodiacData}
             yearElement={result.yearElement}
             zodiacYear={result.zodiacYear}
+            compatSection={
+              <CompatChecker
+                primaryAnimal={zodiacData}
+                compatInput={compatInput}
+                setCompatInput={setCompatInput}
+                compatError={compatError}
+                compatAmbiguous={compatAmbiguous}
+                compatState={compatState}
+                onCalc={handleCompatCalc}
+                onKeyDown={handleCompatKeyDown}
+              />
+            }
           />
-
-          {/* ── Compatibility Checker ── */}
-          <section style={{
-            maxWidth: '680px',
-            margin: '0 auto 2rem',
-            padding: '0 1.25rem',
-          }}>
-            <hr style={{
-              border: 'none',
-              borderTop: '1px solid #e5dfd7',
-              marginBottom: '2.5rem',
-            }} />
-            <div className="east-card" style={{ padding: '1.5rem 1.75rem' }}>
-              <h2 style={{
-                fontFamily: FONT_DISPLAY,
-                fontSize: '1.05rem',
-                fontWeight: 600,
-                color: '#2d2926',
-                marginBottom: '4px',
-              }}>
-                Check Compatibility
-              </h2>
-              <p style={{
-                fontFamily: FONT_SANS,
-                fontSize: '0.82rem',
-                color: '#b8aea6',
-                marginBottom: '1.1rem',
-              }}>
-                Enter another person&apos;s birth year or date
-              </p>
-
-              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                <input
-                  type="text"
-                  className="zodiac-input"
-                  style={{ maxWidth: '240px' }}
-                  placeholder="e.g. 1988 or 3 Mar 1988"
-                  value={compatInput}
-                  onChange={e => setCompatInput(e.target.value)}
-                  onKeyDown={handleCompatKeyDown}
-                  aria-label="Second person's birth year or date"
-                />
-                <button className="btn-primary" onClick={handleCompatCalc}>
-                  Compare
-                </button>
-              </div>
-
-              {compatError && (
-                <p style={{
-                  fontFamily: FONT_SANS, color: '#991b1b', fontSize: '0.85rem',
-                  marginTop: '10px', padding: '9px 14px',
-                  background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '6px',
-                }}>
-                  {compatError}
-                </p>
-              )}
-
-              {compatAmbiguous && (
-                <div style={{
-                  marginTop: '10px', padding: '12px 16px',
-                  background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '6px',
-                }}>
-                  <p style={{ fontFamily: FONT_SANS, color: '#92400e', fontSize: '0.85rem', lineHeight: 1.6 }}>
-                    No Chinese New Year date found for <strong>{compatAmbiguous.year}</strong>.
-                    Try entering a full date (e.g. <em>15 Feb {compatAmbiguous.year}</em>).
-                  </p>
-                </div>
-              )}
-
-              {compatState && (
-                <CompatResultCard
-                  animalA={zodiacData}
-                  animalB={compatState.animal}
-                  compat={compatState.result}
-                />
-              )}
-            </div>
-          </section>
 
           {/* ── Action buttons ── */}
           <div style={{
@@ -356,6 +290,95 @@ export default function HomePage() {
       }}>
         Chinese Animal Year · {new Date().getFullYear()}
       </footer>
+    </div>
+  );
+}
+
+/* ─── Compatibility Checker (injected into ZodiacDisplay hero slot) ─────── */
+
+interface CompatCheckerProps {
+  primaryAnimal: ZodiacAnimal;
+  compatInput: string;
+  setCompatInput: (v: string) => void;
+  compatError: string;
+  compatAmbiguous: { ambiguous: true; year: number } | null;
+  compatState: CompatState | null;
+  onCalc: () => void;
+  onKeyDown: (e: React.KeyboardEvent) => void;
+}
+
+function CompatChecker({
+  primaryAnimal, compatInput, setCompatInput,
+  compatError, compatAmbiguous, compatState,
+  onCalc, onKeyDown,
+}: CompatCheckerProps) {
+  return (
+    <div style={{ maxWidth: '640px', margin: '0 auto', padding: '2rem 1.25rem 0.5rem' }}>
+      <div className="east-card" style={{ padding: '1.5rem 1.75rem' }}>
+        <h2 style={{
+          fontFamily: FONT_DISPLAY,
+          fontSize: '1.05rem',
+          fontWeight: 600,
+          color: '#2d2926',
+          marginBottom: '4px',
+        }}>
+          Check Compatibility
+        </h2>
+        <p style={{
+          fontFamily: FONT_SANS,
+          fontSize: '0.82rem',
+          color: '#b8aea6',
+          marginBottom: '1.1rem',
+        }}>
+          Enter another person&apos;s birth year or date
+        </p>
+
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          <input
+            type="text"
+            className="zodiac-input"
+            style={{ maxWidth: '240px' }}
+            placeholder="e.g. 1988 or 3 Mar 1988"
+            value={compatInput}
+            onChange={e => setCompatInput(e.target.value)}
+            onKeyDown={onKeyDown}
+            aria-label="Second person's birth year or date"
+          />
+          <button className="btn-primary" onClick={onCalc}>
+            Compare
+          </button>
+        </div>
+
+        {compatError && (
+          <p style={{
+            fontFamily: FONT_SANS, color: '#991b1b', fontSize: '0.85rem',
+            marginTop: '10px', padding: '9px 14px',
+            background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '6px',
+          }}>
+            {compatError}
+          </p>
+        )}
+
+        {compatAmbiguous && (
+          <div style={{
+            marginTop: '10px', padding: '12px 16px',
+            background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '6px',
+          }}>
+            <p style={{ fontFamily: FONT_SANS, color: '#92400e', fontSize: '0.85rem', lineHeight: 1.6 }}>
+              No Chinese New Year date found for <strong>{compatAmbiguous.year}</strong>.
+              Try entering a full date (e.g. <em>15 Feb {compatAmbiguous.year}</em>).
+            </p>
+          </div>
+        )}
+
+        {compatState && (
+          <CompatResultCard
+            animalA={primaryAnimal}
+            animalB={compatState.animal}
+            compat={compatState.result}
+          />
+        )}
+      </div>
     </div>
   );
 }

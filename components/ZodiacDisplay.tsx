@@ -15,6 +15,7 @@ interface Props {
   showBackLink?: boolean;
   compact?: boolean;
   defaultProfileOpen?: boolean;
+  compatSection?: React.ReactNode;
 }
 
 const ELEMENT_SYMBOLS: Record<string, string> = {
@@ -44,7 +45,7 @@ const ELEMENT_BORDER: Record<string, string> = {
   Water: '#bae6fd',
 };
 
-export default function ZodiacDisplay({ animal, yearElement, zodiacYear, showBackLink, compact, defaultProfileOpen = false }: Props) {
+export default function ZodiacDisplay({ animal, yearElement, zodiacYear, showBackLink, compact, defaultProfileOpen = false, compatSection }: Props) {
   const [profileOpen, setProfileOpen] = useState(defaultProfileOpen);
   const years = getRecentYears(animal.key);
   const elemText = ELEMENT_TEXT[animal.element];
@@ -137,6 +138,8 @@ export default function ZodiacDisplay({ animal, yearElement, zodiacYear, showBac
       </section>
 
       <hr style={{ border: 'none', borderTop: '1px solid #e5dfd7', maxWidth: '800px', margin: '0 auto' }} />
+
+      {compatSection}
 
       {/* ── Core info (always visible) ── */}
       {!compact && (
@@ -360,10 +363,10 @@ export default function ZodiacDisplay({ animal, yearElement, zodiacYear, showBac
           <p style={{
             textAlign: 'center',
             fontFamily: FONT_SANS,
-            fontSize: '0.75rem',
-            color: '#b8aea6',
-            marginBottom: '1.25rem',
-            letterSpacing: '0.02em',
+            fontSize: '1rem',
+            fontWeight: 600,
+            color: '#2d2926',
+            marginBottom: '1.5rem',
           }}>
             All twelve animals
           </p>
@@ -432,39 +435,57 @@ function AllAnimalsRow({ active }: { active: string }) {
 
   return (
     <div style={{
-      display: 'flex',
-      justifyContent: 'center',
-      gap: '4px',
-      flexWrap: 'wrap',
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fill, minmax(76px, 1fr))',
+      gap: '6px',
       maxWidth: '680px',
       margin: '0 auto',
     }}>
-      {animals.map(a => (
-        <Link key={a.key} href={`/zodiac/${a.key}`} style={{ textDecoration: 'none' }}>
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '3px',
-            padding: '7px 9px',
-            borderRadius: '6px',
-            transition: 'background 0.2s',
-            opacity: a.key === active ? 1 : 0.45,
-            background: a.key === active ? '#f5f2ec' : 'transparent',
-            border: a.key === active ? '1px solid #e5dfd7' : '1px solid transparent',
-          }}>
-            <span style={{ fontSize: '1.4rem' }}>{a.emoji}</span>
-            <span style={{
-              fontFamily: FONT_SANS,
-              fontSize: '0.6rem',
-              color: '#7a6f65',
-              letterSpacing: '0.04em',
-            }}>
-              {a.name}
-            </span>
-          </div>
-        </Link>
-      ))}
+      {animals.map(a => {
+        const isActive = a.key === active;
+        return (
+          <Link key={a.key} href={`/zodiac/${a.key}`} style={{ textDecoration: 'none' }}>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '5px',
+                padding: '10px 6px',
+                borderRadius: '8px',
+                transition: 'transform 0.15s ease, background 0.15s, border-color 0.15s',
+                background: isActive ? '#f0ece4' : 'transparent',
+                border: isActive ? '2px solid #8b5a2b' : '2px solid transparent',
+                cursor: 'pointer',
+              }}
+              onMouseEnter={e => {
+                if (!isActive) {
+                  e.currentTarget.style.background = '#faf8f4';
+                  e.currentTarget.style.borderColor = '#e5dfd7';
+                }
+                e.currentTarget.style.transform = 'scale(1.07)';
+              }}
+              onMouseLeave={e => {
+                if (!isActive) {
+                  e.currentTarget.style.background = 'transparent';
+                  e.currentTarget.style.borderColor = 'transparent';
+                }
+                e.currentTarget.style.transform = 'scale(1)';
+              }}
+            >
+              <span style={{ fontSize: '2.5rem', lineHeight: 1 }}>{a.emoji}</span>
+              <span style={{
+                fontFamily: FONT_SANS,
+                fontSize: '0.8rem',
+                fontWeight: 500,
+                color: isActive ? '#8b5a2b' : '#4a3f38',
+              }}>
+                {a.name}
+              </span>
+            </div>
+          </Link>
+        );
+      })}
     </div>
   );
 }
