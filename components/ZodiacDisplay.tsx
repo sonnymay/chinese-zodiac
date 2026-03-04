@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ZodiacAnimal, ANIMAL_EMOJIS, ELEMENT_COLORS } from '@/lib/zodiacData';
 import { getRecentYears, YearElement } from '@/lib/calculateZodiac';
@@ -47,6 +48,16 @@ const ELEMENT_BORDER: Record<string, string> = {
 
 export default function ZodiacDisplay({ animal, yearElement, zodiacYear, showBackLink, compact, defaultProfileOpen = false, compatSection }: Props) {
   const [profileOpen, setProfileOpen] = useState(defaultProfileOpen);
+  const [fading, setFading] = useState(false);
+  const router = useRouter();
+
+  function handleAnimalClick(key: string) {
+    if (key === animal.key) return;
+    setFading(true);
+    setTimeout(() => {
+      router.push(`/zodiac/${key}`);
+    }, 220);
+  }
   const years = getRecentYears(animal.key);
   const elemText = ELEMENT_TEXT[animal.element];
   const elemBg   = ELEMENT_BG[animal.element];
@@ -56,7 +67,7 @@ export default function ZodiacDisplay({ animal, yearElement, zodiacYear, showBac
   const yearElemBorder = yearElement ? ELEMENT_BORDER[yearElement] : null;
 
   return (
-    <article style={{ position: 'relative' }}>
+    <article style={{ position: 'relative', opacity: fading ? 0 : 1, transition: 'opacity 0.22s ease' }}>
 
       {showBackLink && (
         <div style={{ padding: '2rem 1.5rem 0' }}>
@@ -146,6 +157,7 @@ export default function ZodiacDisplay({ animal, yearElement, zodiacYear, showBac
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))',
+          alignItems: 'start',
           gap: '1rem',
           padding: '2rem 1.25rem 1.5rem',
           maxWidth: '960px',
@@ -307,8 +319,9 @@ export default function ZodiacDisplay({ animal, yearElement, zodiacYear, showBac
           <div style={{ padding: '0 1.25rem 1.5rem', maxWidth: '960px', margin: '0 auto' }}>
             <InfoCard title={`Famous People — Year of the ${animal.name}`}>
               <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
+                display: 'flex',
+                flexWrap: 'wrap',
+                justifyContent: 'center',
                 gap: '8px',
               }}>
                 {animal.famous.map((person, i) => (
@@ -329,15 +342,16 @@ export default function ZodiacDisplay({ animal, yearElement, zodiacYear, showBac
           {/* 2026 Forecast */}
           <div style={{ maxWidth: '800px', margin: '0 auto 2.5rem', padding: '0 1.25rem' }}>
             <div style={{
-              background: '#ffffff',
+              background: '#fdf6ee',
               border: '1px solid #e5dfd7',
+              borderLeft: '4px solid #8b5a2b',
               borderRadius: '8px',
               padding: '2rem 2rem',
             }}>
               <h2 style={{
                 fontFamily: FONT_DISPLAY,
-                fontSize: '1.2rem',
-                fontWeight: 600,
+                fontSize: '1.35rem',
+                fontWeight: 700,
                 color: '#2d2926',
                 marginBottom: '1rem',
               }}>
@@ -370,7 +384,7 @@ export default function ZodiacDisplay({ animal, yearElement, zodiacYear, showBac
           }}>
             All twelve animals
           </p>
-          <AllAnimalsRow active={animal.key} />
+          <AllAnimalsRow active={animal.key} onAnimalClick={handleAnimalClick} />
         </div>
       )}
     </article>
@@ -417,7 +431,7 @@ function InfoCard({ title, children }: { title: string; children: React.ReactNod
   );
 }
 
-function AllAnimalsRow({ active }: { active: string }) {
+function AllAnimalsRow({ active, onAnimalClick }: { active: string; onAnimalClick?: (key: string) => void }) {
   const animals = [
     { key: 'rat',     emoji: '🐀', name: 'Rat' },
     { key: 'ox',      emoji: '🐂', name: 'Ox' },
@@ -436,15 +450,15 @@ function AllAnimalsRow({ active }: { active: string }) {
   return (
     <div style={{
       display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fill, minmax(76px, 1fr))',
+      gridTemplateColumns: 'repeat(6, 1fr)',
       gap: '6px',
-      maxWidth: '680px',
+      maxWidth: '560px',
       margin: '0 auto',
     }}>
       {animals.map(a => {
         const isActive = a.key === active;
         return (
-          <Link key={a.key} href={`/zodiac/${a.key}`} style={{ textDecoration: 'none' }}>
+          <Link key={a.key} href={`/zodiac/${a.key}`} style={{ textDecoration: 'none' }} onClick={onAnimalClick ? (e) => { e.preventDefault(); onAnimalClick(a.key); } : undefined}>
             <div
               style={{
                 display: 'flex',
