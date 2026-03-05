@@ -6,6 +6,7 @@ import { calculate, CalculationResult, getZodiacKey, getYearElement } from '@/li
 import { getZodiacData, ZodiacAnimal } from '@/lib/zodiacData';
 import { getCompatibility, CompatResult } from '@/lib/compatibility';
 import ZodiacDisplay from '@/components/ZodiacDisplay';
+import SiteFooter from '@/components/SiteFooter';
 
 const FONT_DISPLAY = '"Playfair Display", Georgia, serif';
 const FONT_SANS = 'Inter, system-ui, sans-serif';
@@ -55,6 +56,7 @@ export default function HomePage() {
     const q = params.get('year');
     if (q) {
       setInput(q);
+      if (/^\d{4}$/.test(q.trim())) setYearDrop(q.trim());
       runCalculation(q, false);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -271,39 +273,53 @@ export default function HomePage() {
       {/* ── Current year hero callout ── */}
       {!result && CURRENT_ANIMAL_DATA && (
         <div style={{ maxWidth: '520px', margin: '0 auto 2.5rem', padding: '0 20px' }}>
-          <div style={{
-            background: '#fdf6ee',
-            border: '1px solid #e8d9c8',
-            borderLeft: '4px solid #8b5a2b',
-            borderRadius: '8px',
-            padding: '1.1rem 1.4rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '14px',
-          }}>
-            <span style={{ fontSize: '2.2rem', lineHeight: 1, flexShrink: 0 }}>
-              {CURRENT_ANIMAL_DATA.emoji}
-            </span>
-            <div style={{ textAlign: 'left' }}>
-              <p style={{
-                fontFamily: FONT_DISPLAY,
-                fontSize: '1rem',
-                fontWeight: 700,
-                color: '#2d2926',
-                marginBottom: '3px',
-              }}>
-                {CURRENT_YEAR} — Year of the {CURRENT_ELEMENT} {CURRENT_ANIMAL_DATA.name}
-              </p>
-              <p style={{
-                fontFamily: FONT_SANS,
-                fontSize: '0.82rem',
-                color: '#7a6f65',
-                lineHeight: 1.5,
-              }}>
-                {CURRENT_ANIMAL_DATA.description}
-              </p>
+          <Link href={`/zodiac/${CURRENT_ZODIAC_KEY}`} style={{ textDecoration: 'none', display: 'block' }}>
+            <div
+              style={{
+                background: '#fdf6ee',
+                border: '1px solid #e8d9c8',
+                borderLeft: '4px solid #8b5a2b',
+                borderRadius: '8px',
+                padding: '1.1rem 1.4rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '14px',
+                cursor: 'pointer',
+                transition: 'background 0.2s, box-shadow 0.2s',
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = '#f7ece0';
+                e.currentTarget.style.boxShadow = '0 4px 14px rgba(139,90,43,0.12)';
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = '#fdf6ee';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+            >
+              <span style={{ fontSize: '2.2rem', lineHeight: 1, flexShrink: 0 }}>
+                {CURRENT_ANIMAL_DATA.emoji}
+              </span>
+              <div style={{ textAlign: 'left' }}>
+                <p style={{
+                  fontFamily: FONT_DISPLAY,
+                  fontSize: '1rem',
+                  fontWeight: 700,
+                  color: '#2d2926',
+                  marginBottom: '3px',
+                }}>
+                  {CURRENT_YEAR} — Year of the {CURRENT_ELEMENT} {CURRENT_ANIMAL_DATA.name}
+                </p>
+                <p style={{
+                  fontFamily: FONT_SANS,
+                  fontSize: '0.82rem',
+                  color: '#7a6f65',
+                  lineHeight: 1.5,
+                }}>
+                  {CURRENT_ANIMAL_DATA.description}
+                </p>
+              </div>
             </div>
-          </div>
+          </Link>
         </div>
       )}
 
@@ -632,8 +648,10 @@ function BrowseGrid() {
   return (
     <div style={{
       display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fill, minmax(108px, 1fr))',
+      gridTemplateColumns: 'repeat(6, 1fr)',
       gap: '6px',
+      maxWidth: '720px',
+      margin: '0 auto',
     }}>
       {BROWSE_ANIMALS.map(a => (
         <Link key={a.key} href={`/zodiac/${a.key}`} style={{ textDecoration: 'none' }}>
@@ -666,98 +684,3 @@ function BrowseGrid() {
   );
 }
 
-/* ─── Footer ─────────────────────────────────────────────────────────────── */
-
-const FOOTER_ANIMALS = [
-  { key: 'rat',     emoji: '🐀', name: 'Rat'     },
-  { key: 'ox',      emoji: '🐂', name: 'Ox'      },
-  { key: 'tiger',   emoji: '🐅', name: 'Tiger'   },
-  { key: 'rabbit',  emoji: '🐇', name: 'Rabbit'  },
-  { key: 'dragon',  emoji: '🐉', name: 'Dragon'  },
-  { key: 'snake',   emoji: '🐍', name: 'Snake'   },
-  { key: 'horse',   emoji: '🐎', name: 'Horse'   },
-  { key: 'goat',    emoji: '🐐', name: 'Goat'    },
-  { key: 'monkey',  emoji: '🐒', name: 'Monkey'  },
-  { key: 'rooster', emoji: '🐓', name: 'Rooster' },
-  { key: 'dog',     emoji: '🐕', name: 'Dog'     },
-  { key: 'pig',     emoji: '🐖', name: 'Pig'     },
-];
-
-function SiteFooter() {
-  return (
-    <footer style={{
-      borderTop: '1px solid #e5dfd7',
-      padding: '3rem 20px 2.5rem',
-      marginTop: 'auto',
-    }}>
-      <div style={{ maxWidth: '700px', margin: '0 auto', textAlign: 'center' }}>
-        <p style={{
-          fontFamily: FONT_DISPLAY,
-          fontSize: '1rem',
-          fontWeight: 600,
-          color: '#2d2926',
-          marginBottom: '1.75rem',
-        }}>
-          Discover your Chinese zodiac sign and what it means for you.
-        </p>
-
-        {/* Animal links */}
-        <div style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          justifyContent: 'center',
-          gap: '6px',
-          marginBottom: '2rem',
-        }}>
-          {FOOTER_ANIMALS.map(a => (
-            <Link
-              key={a.key}
-              href={`/zodiac/${a.key}`}
-              style={{
-                fontFamily: FONT_SANS,
-                fontSize: '0.82rem',
-                color: '#7a6f65',
-                textDecoration: 'none',
-                padding: '4px 11px',
-                borderRadius: '20px',
-                border: '1px solid #e5dfd7',
-                transition: 'color 0.15s, border-color 0.15s, background 0.15s',
-                display: 'inline-block',
-              }}
-              onMouseEnter={e => {
-                (e.currentTarget as HTMLAnchorElement).style.color = '#2d2926';
-                (e.currentTarget as HTMLAnchorElement).style.borderColor = '#c4b8a8';
-                (e.currentTarget as HTMLAnchorElement).style.background = '#ffffff';
-              }}
-              onMouseLeave={e => {
-                (e.currentTarget as HTMLAnchorElement).style.color = '#7a6f65';
-                (e.currentTarget as HTMLAnchorElement).style.borderColor = '#e5dfd7';
-                (e.currentTarget as HTMLAnchorElement).style.background = 'transparent';
-              }}
-            >
-              {a.emoji} {a.name}
-            </Link>
-          ))}
-        </div>
-
-        {/* Lunar calendar note */}
-        <p style={{
-          fontFamily: FONT_SANS,
-          fontSize: '0.78rem',
-          color: '#b8aea6',
-          lineHeight: 1.7,
-          maxWidth: '460px',
-          margin: '0 auto 1.5rem',
-        }}>
-          Chinese zodiac signs change in late January or February with the lunar new year —
-          not on January 1. If you were born in January or early February, enter your full
-          date of birth above for an accurate result.
-        </p>
-
-        <p style={{ fontFamily: FONT_SANS, fontSize: '0.75rem', color: '#c4b8a8' }}>
-          Chinese Animal Year · {CURRENT_YEAR}
-        </p>
-      </div>
-    </footer>
-  );
-}
