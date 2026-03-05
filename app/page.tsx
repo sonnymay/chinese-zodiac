@@ -1,14 +1,19 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { calculate, CalculationResult } from '@/lib/calculateZodiac';
+import { calculate, CalculationResult, getZodiacKey, getYearElement } from '@/lib/calculateZodiac';
 import { getZodiacData, ZodiacAnimal } from '@/lib/zodiacData';
 import { getCompatibility, CompatResult } from '@/lib/compatibility';
 import ZodiacDisplay from '@/components/ZodiacDisplay';
 
 const FONT_DISPLAY = '"Playfair Display", Georgia, serif';
 const FONT_SANS = 'Inter, system-ui, sans-serif';
+
+const CURRENT_YEAR = new Date().getFullYear();
+const CURRENT_ZODIAC_KEY = getZodiacKey(CURRENT_YEAR);
+const CURRENT_ELEMENT = getYearElement(CURRENT_YEAR);
+const CURRENT_ANIMAL_DATA = getZodiacData(CURRENT_ZODIAC_KEY);
 
 type AmbiguousResult = { ambiguous: true; year: number };
 
@@ -17,8 +22,22 @@ interface CompatState {
   animal: ZodiacAnimal;
 }
 
+// Year dropdown options: current year down to 1924
+const YEAR_OPTIONS: number[] = [];
+for (let y = CURRENT_YEAR; y >= 1924; y--) YEAR_OPTIONS.push(y);
+
+// Browse grid: 5 recent years per animal
+function getYearsStr(offset: number): string {
+  const years: number[] = [];
+  for (let y = 1900 + offset; y <= CURRENT_YEAR; y += 12) {
+    if (y >= 1960) years.push(y);
+  }
+  return years.slice(-5).join(', ');
+}
+
 export default function HomePage() {
   const [input, setInput] = useState('');
+  const [yearDrop, setYearDrop] = useState('');
   const [result, setResult] = useState<CalculationResult | null>(null);
   const [errorMsg, setErrorMsg] = useState('');
   const [ambiguous, setAmbiguous] = useState<AmbiguousResult | null>(null);
@@ -30,20 +49,26 @@ export default function HomePage() {
 
   const resultsRef = useRef<HTMLDivElement>(null);
 
-  function handleCalculate() {
-    if (!input.trim()) {
-      setErrorMsg('Please enter your birth year or full date of birth.');
-      return;
+  // Read ?year= param on mount and auto-calculate
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const q = params.get('year');
+    if (q) {
+      setInput(q);
+      runCalculation(q, false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function runCalculation(val: string, updateUrl = true) {
     setErrorMsg('');
     setAmbiguous(null);
-    // Reset compat when recalculating main result
     setCompatState(null);
     setCompatError('');
     setCompatAmbiguous(null);
     setCompatInput('');
 
-    const res = calculate(input);
+    const res = calculate(val);
 
     if ('error' in res) {
       setErrorMsg(res.error);
@@ -53,10 +78,32 @@ export default function HomePage() {
       setResult(null);
     } else {
       setResult(res as CalculationResult);
+      if (updateUrl) {
+        const url = new URL(window.location.href);
+        url.searchParams.set('year', val.trim());
+        window.history.replaceState({}, '', url.toString());
+      }
       setTimeout(() => {
         resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 80);
     }
+  }
+
+  function handleDropdownChange(e: React.ChangeEvent<HTMLSelectElement>) {
+    const val = e.target.value;
+    setYearDrop(val);
+    if (val) {
+      setInput(val);
+      runCalculation(val);
+    }
+  }
+
+  function handleCalculate() {
+    if (!input.trim()) {
+      setErrorMsg('Please enter your birth year or full date of birth.');
+      return;
+    }
+    runCalculation(input.trim());
   }
 
   function handleKeyDown(e: React.KeyboardEvent) {
@@ -105,13 +152,17 @@ export default function HomePage() {
     setCompatAmbiguous(null);
     setCompatInput('');
     setInput('');
+    setYearDrop('');
+    const url = new URL(window.location.href);
+    url.searchParams.delete('year');
+    window.history.replaceState({}, '', url.toString());
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   const zodiacData = result ? getZodiacData(result.zodiacKey) : null;
 
   return (
-    <div style={{ minHeight: '100vh' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
 
       {/* ── Header ── */}
       <header style={{ textAlign: 'center', padding: 'clamp(56px, 10vh, 104px) 20px 44px' }}>
@@ -134,13 +185,14 @@ export default function HomePage() {
       {/* ── Calculator input ── */}
       <section style={{
         textAlign: 'center',
-        padding: result ? '0 20px 36px' : '0 20px 64px',
+        padding: result ? '0 20px 36px' : '0 20px 48px',
         maxWidth: '520px',
         margin: '0 auto',
         transition: 'padding 0.3s ease',
       }}>
+        {/* Primary: year dropdown */}
         <label
-          htmlFor="birthInput"
+          htmlFor="yearDropdown"
           style={{
             display: 'block',
             fontFamily: FONT_SANS,
@@ -150,20 +202,42 @@ export default function HomePage() {
             marginBottom: '10px',
           }}
         >
-          Birth year or date of birth
+          Select your birth year
         </label>
+        <select
+          id="yearDropdown"
+          className="zodiac-input"
+          style={{ maxWidth: '240px', width: '100%', cursor: 'pointer', display: 'block', margin: '0 auto 18px' }}
+          value={yearDrop}
+          onChange={handleDropdownChange}
+          aria-label="Select birth year"
+        >
+          <option value="">Select year…</option>
+          {YEAR_OPTIONS.map(y => (
+            <option key={y} value={String(y)}>{y}</option>
+          ))}
+        </select>
 
+        {/* Secondary: full date text input */}
+        <p style={{
+          fontFamily: FONT_SANS,
+          color: '#b8aea6',
+          fontSize: '0.78rem',
+          marginBottom: '8px',
+        }}>
+          or type a full date for CNY precision
+        </p>
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'center' }}>
           <input
             id="birthInput"
             type="text"
             className="zodiac-input"
-            style={{ maxWidth: '270px' }}
-            placeholder="e.g. 1990 or 15 Jan 1990"
+            style={{ maxWidth: '240px' }}
+            placeholder="e.g. 15 Jan 1990"
             value={input}
-            onChange={e => setInput(e.target.value)}
+            onChange={e => { setInput(e.target.value); setYearDrop(''); }}
             onKeyDown={handleKeyDown}
-            aria-label="Birth year or full date of birth"
+            aria-label="Full date of birth"
           />
           <button className="btn-primary" onClick={handleCalculate}>
             Find My Sign
@@ -193,6 +267,45 @@ export default function HomePage() {
           </div>
         )}
       </section>
+
+      {/* ── Current year hero callout ── */}
+      {!result && CURRENT_ANIMAL_DATA && (
+        <div style={{ maxWidth: '520px', margin: '0 auto 2.5rem', padding: '0 20px' }}>
+          <div style={{
+            background: '#fdf6ee',
+            border: '1px solid #e8d9c8',
+            borderLeft: '4px solid #8b5a2b',
+            borderRadius: '8px',
+            padding: '1.1rem 1.4rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '14px',
+          }}>
+            <span style={{ fontSize: '2.2rem', lineHeight: 1, flexShrink: 0 }}>
+              {CURRENT_ANIMAL_DATA.emoji}
+            </span>
+            <div style={{ textAlign: 'left' }}>
+              <p style={{
+                fontFamily: FONT_DISPLAY,
+                fontSize: '1rem',
+                fontWeight: 700,
+                color: '#2d2926',
+                marginBottom: '3px',
+              }}>
+                {CURRENT_YEAR} — Year of the {CURRENT_ELEMENT} {CURRENT_ANIMAL_DATA.name}
+              </p>
+              <p style={{
+                fontFamily: FONT_SANS,
+                fontSize: '0.82rem',
+                color: '#7a6f65',
+                lineHeight: 1.5,
+              }}>
+                {CURRENT_ANIMAL_DATA.description}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── Results ── */}
       {result && zodiacData && (
@@ -283,18 +396,12 @@ export default function HomePage() {
       )}
 
       {/* ── Footer ── */}
-      <footer style={{
-        textAlign: 'center', padding: '20px',
-        borderTop: '1px solid #e5dfd7',
-        color: '#b8aea6', fontFamily: FONT_SANS, fontSize: '0.78rem',
-      }}>
-        Chinese Animal Year · {new Date().getFullYear()}
-      </footer>
+      <SiteFooter />
     </div>
   );
 }
 
-/* ─── Compatibility Checker (injected into ZodiacDisplay hero slot) ─────── */
+/* ─── Compatibility Checker ──────────────────────────────────────────────── */
 
 interface CompatCheckerProps {
   primaryAnimal: ZodiacAnimal;
@@ -314,11 +421,17 @@ function CompatChecker({
 }: CompatCheckerProps) {
   return (
     <div style={{ maxWidth: '640px', margin: '0 auto', padding: '2rem 1.25rem 0.5rem' }}>
-      <div className="east-card" style={{ padding: '1.5rem 1.75rem' }}>
+      <div style={{
+        background: '#fdf6ee',
+        border: '1px solid #e8d9c8',
+        borderLeft: '4px solid #8b5a2b',
+        borderRadius: '8px',
+        padding: '1.75rem 2rem',
+      }}>
         <h2 style={{
           fontFamily: FONT_DISPLAY,
-          fontSize: '1.05rem',
-          fontWeight: 600,
+          fontSize: '1.25rem',
+          fontWeight: 700,
           color: '#2d2926',
           marginBottom: '4px',
         }}>
@@ -327,17 +440,17 @@ function CompatChecker({
         <p style={{
           fontFamily: FONT_SANS,
           fontSize: '0.82rem',
-          color: '#b8aea6',
-          marginBottom: '1.1rem',
+          color: '#7a6f65',
+          marginBottom: '1.25rem',
         }}>
-          Enter another person&apos;s birth year or date
+          Compare {primaryAnimal.name}&apos;s compatibility with another sign
         </p>
 
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
           <input
             type="text"
             className="zodiac-input"
-            style={{ maxWidth: '240px' }}
+            style={{ maxWidth: '240px', background: '#ffffff' }}
             placeholder="e.g. 1988 or 3 Mar 1988"
             value={compatInput}
             onChange={e => setCompatInput(e.target.value)}
@@ -383,7 +496,7 @@ function CompatChecker({
   );
 }
 
-/* ─── Compatibility Result Card ─────────────────────────────────────────── */
+/* ─── Compatibility Result Card ──────────────────────────────────────────── */
 
 const RATING_COLOR: Record<string, string> = {
   excellent:   '#166534',
@@ -409,6 +522,14 @@ const RATING_BORDER: Record<string, string> = {
   challenging: '#fecaca',
 };
 
+const RATING_ICON: Record<string, string> = {
+  excellent:   '✓',
+  strong:      '✓',
+  neutral:     '·',
+  difficult:   '✗',
+  challenging: '✗',
+};
+
 function StarRow({ stars }: { stars: number }) {
   return (
     <span aria-label={`${stars} out of 5 stars`}>
@@ -431,6 +552,7 @@ function CompatResultCard({ animalA, animalB, compat }: {
   const color  = RATING_COLOR[compat.rating];
   const bg     = RATING_BG[compat.rating];
   const border = RATING_BORDER[compat.rating];
+  const icon   = RATING_ICON[compat.rating];
 
   return (
     <div style={{
@@ -444,34 +566,34 @@ function CompatResultCard({ animalA, animalB, compat }: {
       {/* Animals side by side */}
       <div style={{
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        gap: '8px', marginBottom: '1rem', flexWrap: 'wrap',
+        gap: '10px', marginBottom: '1rem', flexWrap: 'wrap',
       }}>
-        <span style={{ fontSize: '1.5rem' }}>{animalA.emoji}</span>
-        <span style={{ fontFamily: FONT_DISPLAY, fontWeight: 600, fontSize: '1rem', color: '#2d2926' }}>
-          {animalA.name}
-        </span>
-        <span style={{ fontFamily: FONT_SANS, color: '#b8aea6', fontSize: '0.85rem' }}>&amp;</span>
-        <span style={{ fontFamily: FONT_DISPLAY, fontWeight: 600, fontSize: '1rem', color: '#2d2926' }}>
-          {animalB.name}
-        </span>
-        <span style={{ fontSize: '1.5rem' }}>{animalB.emoji}</span>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '2rem', lineHeight: 1, marginBottom: '2px' }}>{animalA.emoji}</div>
+          <div style={{ fontFamily: FONT_SANS, fontSize: '0.78rem', color: '#7a6f65' }}>{animalA.name}</div>
+        </div>
+        <span style={{ fontFamily: FONT_SANS, color: '#b8aea6', fontSize: '1.2rem', padding: '0 4px' }}>&amp;</span>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '2rem', lineHeight: 1, marginBottom: '2px' }}>{animalB.emoji}</div>
+          <div style={{ fontFamily: FONT_SANS, fontSize: '0.78rem', color: '#7a6f65' }}>{animalB.name}</div>
+        </div>
       </div>
 
-      {/* Rating row */}
+      {/* Label + stars */}
       <div style={{
         display: 'flex', alignItems: 'center', gap: '10px',
         marginBottom: '0.85rem', justifyContent: 'center', flexWrap: 'wrap',
       }}>
         <StarRow stars={compat.stars} />
         <span style={{
-          fontFamily: FONT_SANS, fontSize: '0.82rem', fontWeight: 500,
+          fontFamily: FONT_SANS, fontSize: '0.85rem', fontWeight: 600,
           color,
-          padding: '2px 10px',
-          background: 'rgba(255,255,255,0.6)',
+          padding: '3px 12px',
+          background: 'rgba(255,255,255,0.7)',
           border: `1px solid ${border}`,
           borderRadius: '20px',
         }}>
-          {compat.label}
+          {icon} {compat.label}
         </span>
       </div>
 
@@ -489,31 +611,31 @@ function CompatResultCard({ animalA, animalB, compat }: {
   );
 }
 
-/* ─── Browse Grid ─────────────────────────────────────────────────────────── */
+/* ─── Browse Grid ────────────────────────────────────────────────────────── */
+
+const BROWSE_ANIMALS = [
+  { key: 'rat',     emoji: '🐀', name: 'Rat',     offset: 0  },
+  { key: 'ox',      emoji: '🐂', name: 'Ox',      offset: 1  },
+  { key: 'tiger',   emoji: '🐅', name: 'Tiger',   offset: 2  },
+  { key: 'rabbit',  emoji: '🐇', name: 'Rabbit',  offset: 3  },
+  { key: 'dragon',  emoji: '🐉', name: 'Dragon',  offset: 4  },
+  { key: 'snake',   emoji: '🐍', name: 'Snake',   offset: 5  },
+  { key: 'horse',   emoji: '🐎', name: 'Horse',   offset: 6  },
+  { key: 'goat',    emoji: '🐐', name: 'Goat',    offset: 7  },
+  { key: 'monkey',  emoji: '🐒', name: 'Monkey',  offset: 8  },
+  { key: 'rooster', emoji: '🐓', name: 'Rooster', offset: 9  },
+  { key: 'dog',     emoji: '🐕', name: 'Dog',     offset: 10 },
+  { key: 'pig',     emoji: '🐖', name: 'Pig',     offset: 11 },
+];
 
 function BrowseGrid() {
-  const animals = [
-    { key: 'rat',     emoji: '🐀', name: 'Rat',     years: '2020, 2008, 1996' },
-    { key: 'ox',      emoji: '🐂', name: 'Ox',      years: '2021, 2009, 1997' },
-    { key: 'tiger',   emoji: '🐅', name: 'Tiger',   years: '2022, 2010, 1998' },
-    { key: 'rabbit',  emoji: '🐇', name: 'Rabbit',  years: '2023, 2011, 1999' },
-    { key: 'dragon',  emoji: '🐉', name: 'Dragon',  years: '2024, 2012, 2000' },
-    { key: 'snake',   emoji: '🐍', name: 'Snake',   years: '2025, 2013, 2001' },
-    { key: 'horse',   emoji: '🐎', name: 'Horse',   years: '2026, 2014, 2002' },
-    { key: 'goat',    emoji: '🐐', name: 'Goat',    years: '2027, 2015, 2003' },
-    { key: 'monkey',  emoji: '🐒', name: 'Monkey',  years: '2028, 2016, 2004' },
-    { key: 'rooster', emoji: '🐓', name: 'Rooster', years: '2029, 2017, 2005' },
-    { key: 'dog',     emoji: '🐕', name: 'Dog',     years: '2030, 2018, 2006' },
-    { key: 'pig',     emoji: '🐖', name: 'Pig',     years: '2031, 2019, 2007' },
-  ];
-
   return (
     <div style={{
       display: 'grid',
       gridTemplateColumns: 'repeat(auto-fill, minmax(108px, 1fr))',
       gap: '6px',
     }}>
-      {animals.map(a => (
+      {BROWSE_ANIMALS.map(a => (
         <Link key={a.key} href={`/zodiac/${a.key}`} style={{ textDecoration: 'none' }}>
           <div
             style={{
@@ -531,13 +653,111 @@ function BrowseGrid() {
             }}
           >
             <div style={{ fontSize: '1.75rem', marginBottom: '5px' }}>{a.emoji}</div>
-            <div style={{ fontFamily: FONT_SANS, color: '#2d2926', fontSize: '0.75rem', fontWeight: 500, marginBottom: '2px' }}>
+            <div style={{ fontFamily: FONT_SANS, color: '#2d2926', fontSize: '0.75rem', fontWeight: 500, marginBottom: '3px' }}>
               {a.name}
             </div>
-            <div style={{ color: '#b8aea6', fontSize: '0.62rem' }}>{a.years}</div>
+            <div style={{ color: '#b8aea6', fontSize: '0.6rem', lineHeight: 1.5 }}>
+              {getYearsStr(a.offset)}
+            </div>
           </div>
         </Link>
       ))}
     </div>
+  );
+}
+
+/* ─── Footer ─────────────────────────────────────────────────────────────── */
+
+const FOOTER_ANIMALS = [
+  { key: 'rat',     emoji: '🐀', name: 'Rat'     },
+  { key: 'ox',      emoji: '🐂', name: 'Ox'      },
+  { key: 'tiger',   emoji: '🐅', name: 'Tiger'   },
+  { key: 'rabbit',  emoji: '🐇', name: 'Rabbit'  },
+  { key: 'dragon',  emoji: '🐉', name: 'Dragon'  },
+  { key: 'snake',   emoji: '🐍', name: 'Snake'   },
+  { key: 'horse',   emoji: '🐎', name: 'Horse'   },
+  { key: 'goat',    emoji: '🐐', name: 'Goat'    },
+  { key: 'monkey',  emoji: '🐒', name: 'Monkey'  },
+  { key: 'rooster', emoji: '🐓', name: 'Rooster' },
+  { key: 'dog',     emoji: '🐕', name: 'Dog'     },
+  { key: 'pig',     emoji: '🐖', name: 'Pig'     },
+];
+
+function SiteFooter() {
+  return (
+    <footer style={{
+      borderTop: '1px solid #e5dfd7',
+      padding: '3rem 20px 2.5rem',
+      marginTop: 'auto',
+    }}>
+      <div style={{ maxWidth: '700px', margin: '0 auto', textAlign: 'center' }}>
+        <p style={{
+          fontFamily: FONT_DISPLAY,
+          fontSize: '1rem',
+          fontWeight: 600,
+          color: '#2d2926',
+          marginBottom: '1.75rem',
+        }}>
+          Discover your Chinese zodiac sign and what it means for you.
+        </p>
+
+        {/* Animal links */}
+        <div style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          justifyContent: 'center',
+          gap: '6px',
+          marginBottom: '2rem',
+        }}>
+          {FOOTER_ANIMALS.map(a => (
+            <Link
+              key={a.key}
+              href={`/zodiac/${a.key}`}
+              style={{
+                fontFamily: FONT_SANS,
+                fontSize: '0.82rem',
+                color: '#7a6f65',
+                textDecoration: 'none',
+                padding: '4px 11px',
+                borderRadius: '20px',
+                border: '1px solid #e5dfd7',
+                transition: 'color 0.15s, border-color 0.15s, background 0.15s',
+                display: 'inline-block',
+              }}
+              onMouseEnter={e => {
+                (e.currentTarget as HTMLAnchorElement).style.color = '#2d2926';
+                (e.currentTarget as HTMLAnchorElement).style.borderColor = '#c4b8a8';
+                (e.currentTarget as HTMLAnchorElement).style.background = '#ffffff';
+              }}
+              onMouseLeave={e => {
+                (e.currentTarget as HTMLAnchorElement).style.color = '#7a6f65';
+                (e.currentTarget as HTMLAnchorElement).style.borderColor = '#e5dfd7';
+                (e.currentTarget as HTMLAnchorElement).style.background = 'transparent';
+              }}
+            >
+              {a.emoji} {a.name}
+            </Link>
+          ))}
+        </div>
+
+        {/* Lunar calendar note */}
+        <p style={{
+          fontFamily: FONT_SANS,
+          fontSize: '0.78rem',
+          color: '#b8aea6',
+          lineHeight: 1.7,
+          maxWidth: '460px',
+          margin: '0 auto 1.5rem',
+        }}>
+          Chinese zodiac signs change in late January or February with the lunar new year —
+          not on January 1. If you were born in January or early February, enter your full
+          date of birth above for an accurate result.
+        </p>
+
+        <p style={{ fontFamily: FONT_SANS, fontSize: '0.75rem', color: '#c4b8a8' }}>
+          Chinese Animal Year · {CURRENT_YEAR}
+        </p>
+      </div>
+    </footer>
   );
 }

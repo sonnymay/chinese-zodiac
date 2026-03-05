@@ -157,7 +157,7 @@ export default function ZodiacDisplay({ animal, yearElement, zodiacYear, showBac
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))',
-          alignItems: 'start',
+          alignItems: 'stretch',
           gap: '1rem',
           padding: '2rem 1.25rem 1.5rem',
           maxWidth: '960px',
@@ -177,6 +177,27 @@ export default function ZodiacDisplay({ animal, yearElement, zodiacYear, showBac
             <p style={{ fontFamily: FONT_SANS, color: '#7a6f65', lineHeight: 1.7, fontSize: '0.92rem' }}>
               {animal.elementDesc}
             </p>
+            <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid #f0ece4' }}>
+              <p style={{
+                fontFamily: FONT_SANS,
+                fontSize: '0.72rem',
+                fontWeight: 500,
+                color: '#b8aea6',
+                textTransform: 'uppercase',
+                letterSpacing: '0.07em',
+                marginBottom: '4px',
+              }}>
+                Polarity
+              </p>
+              <p style={{ fontFamily: FONT_SANS, color: '#2d2926', fontSize: '0.92rem', fontWeight: 500, marginBottom: '4px' }}>
+                {animal.yinYang}
+              </p>
+              <p style={{ fontFamily: FONT_SANS, color: '#7a6f65', fontSize: '0.88rem', lineHeight: 1.6 }}>
+                {animal.yinYang === 'Yin'
+                  ? 'Yin signs tend to be receptive, introspective, and steady. They draw energy inward.'
+                  : 'Yang signs tend to be active, outgoing, and assertive. They project energy outward.'}
+              </p>
+            </div>
           </InfoCard>
 
           {/* Personality Traits */}
