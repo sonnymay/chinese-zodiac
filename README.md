@@ -17,6 +17,24 @@ It's also a small playground for me to stay sharp on Next.js and the modern Reac
 ## Features
 
 - **Year → sign** lookup with accurate lunar-new-year boundary handling
+- **Personality traits** — detailed description of each zodiac animal
+- **Compatibility info** — which signs you're most compatible with
+- **Clean, fast UI** — no ads, no popups, just the answer
+- **Mobile-responsive** — works great on any screen size
+
+## Tech Stack
+
+- **Framework:** Next.js 14 with App Router
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS
+- **Deployment:** Vercel
+
+## Getting Started
+
+```bash
+npm install
+npm run dev
+```
 - **Trait breakdown** for each of the 12 animals (Rat through Pig)
 - **Element pairing** (Wood / Fire / Earth / Metal / Water) for the 60-year cycle
 - Clean, mobile-first layout — no ads, no popups, no tracking
