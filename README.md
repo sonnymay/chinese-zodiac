@@ -1,76 +1,50 @@
 # Chinese Zodiac
 
-> Enter your birth year. Get your Chinese zodiac sign, the traits behind it, and a quick read on what that animal means.
+![Next.js](https://img.shields.io/badge/Next.js-16-000000?style=flat-square&logo=nextdotjs&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white)
+![Vercel](https://img.shields.io/badge/Vercel-deployed-000000?style=flat-square&logo=vercel&logoColor=white)
 
-**Live demo:** [chinese-zodiac-seven.vercel.app](https://chinese-zodiac-seven.vercel.app)
+Chinese Zodiac is a fast, single-purpose Next.js app for finding a Chinese zodiac animal by birth year or full birth date. It includes animal profiles, element information, compatibility details, and a clean mobile-first interface.
 
----
+## Live Demo
 
-## Why this exists
-
-The Chinese zodiac is one of the oldest personality frameworks still in daily use, and most online "what's your sign?" tools wrap it in ads, popups, and SEO sludge. I wanted a clean, fast, single-purpose page: type a year, get a thoughtful answer.
-
-It's also a small playground for me to stay sharp on Next.js and the modern React server component model between larger projects.
-
----
+[chinese-zodiac-seven.vercel.app](https://chinese-zodiac-seven.vercel.app)
 
 ## Features
 
-- **Year → sign** lookup with accurate lunar-new-year boundary handling
-- **Personality traits** — detailed description of each zodiac animal
-- **Compatibility info** — which signs you're most compatible with
-- **Clean, fast UI** — no ads, no popups, just the answer
-- **Mobile-responsive** — works great on any screen size
+- Year and full-date zodiac lookup, including Chinese New Year boundary handling for supported years
+- Profiles for all 12 zodiac animals with traits, elements, yin/yang, lucky colors, numbers, flowers, and gems
+- Compatibility calculator between two zodiac signs
+- Recent-year lists and browse pages for each animal
+- Shareable `?year=` URL state for calculated results
+- Responsive layout built for quick use on desktop and mobile
 
 ## Tech Stack
 
-- **Framework:** Next.js 14 with App Router
-- **Language:** TypeScript
-- **Styling:** Tailwind CSS
-- **Deployment:** Vercel
+| Library | Purpose |
+|---|---|
+| Next.js 16 | App Router framework and production build |
+| React 19 | Interactive UI components |
+| TypeScript | Typed zodiac calculation and display logic |
+| Tailwind CSS 4 | Styling foundation |
+| Vercel | Hosting and deployment |
+
+## What This Code Shows
+
+- Data-driven UI from typed zodiac profile and compatibility modules
+- Date parsing and edge-case handling around lunar new year boundaries
+- Next.js App Router structure with reusable display components
+- SEO-friendly metadata and canonical page setup
+- A focused product scope that keeps the app fast and easy to understand
 
 ## Getting Started
 
 ```bash
-npm install
-npm run dev
-```
-- **Trait breakdown** for each of the 12 animals (Rat through Pig)
-- **Element pairing** (Wood / Fire / Earth / Metal / Water) for the 60-year cycle
-- Clean, mobile-first layout — no ads, no popups, no tracking
-
----
-
-## Stack
-
-| Layer    | Tech                                  |
-|----------|---------------------------------------|
-| Framework| Next.js 16 (App Router)               |
-| UI       | React 19, Tailwind CSS v4, TypeScript |
-| Hosting  | Vercel                                |
-
----
-
-## Local development
-
-```bash
+git clone https://github.com/sonnymay/chinese-zodiac.git
+cd chinese-zodiac
 npm install
 npm run dev
 ```
 
-App runs at `http://localhost:3000`.
+Open `http://localhost:3000` in your browser.
 
----
-
-## Roadmap
-
-- [ ] Compatibility matrix between two signs
-- [ ] Year-of-the-X overview page (e.g. 2026 Year of the Horse)
-- [ ] Daily reading rooted in the Chinese almanac
-- [ ] Share card (OG image) per sign
-
----
-
-## About
-
-Built by [Sonny May](https://github.com/sonnymay). One of a small set of focused web tools I ship between larger projects.
